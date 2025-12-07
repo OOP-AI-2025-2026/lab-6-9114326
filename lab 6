@@ -1,0 +1,445 @@
+Завдання 1. Класи Animal / Dog / Cat + main()
+abstract class Animal {
+
+    private String name;
+
+    public Animal(String name) {
+        this.name = name;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    abstract String makeSound();
+}
+
+// -------------------------
+class Dog extends Animal {
+
+    public Dog(String name) {
+        super(name);
+    }
+
+    @Override
+    String makeSound() {
+        return "Woof!";
+    }
+}
+
+// -------------------------
+class Cat extends Animal {
+
+    public Cat(String name) {
+        super(name);
+    }
+
+    @Override
+    String makeSound() {
+        return "Meow!";
+    }
+}
+
+// -------------------------
+public class Main {
+    public static void main(String[] args) {
+
+        Animal d = new Dog("Барсик");
+        Animal c = new Cat("Муся");
+
+        System.out.println(d.getName() + ": " + d.makeSound());
+        System.out.println(c.getName() + ": " + c.makeSound());
+    }
+}
+
+Завдання 2. Інтерфейс Movable + клас Point
+
+interface Movable {
+    void setX(double x);
+    void setY(double y);
+    double getX();
+    double getY();
+    void moveTo(double x, double y);
+}
+
+public class Point implements Movable {
+
+    private double x;
+    private double y;
+
+    public Point() {
+        this.x = 0;
+        this.y = 0;
+    }
+
+    public Point(double x, double y) {
+        this.x = x;
+        this.y = y;
+    }
+
+    @Override
+    public void setX(double x) {
+        this.x = x;
+    }
+
+    @Override
+    public void setY(double y) {
+        this.y = y;
+    }
+
+    @Override
+    public double getX() {
+        return x;
+    }
+
+    @Override
+    public double getY() {
+        return y;
+    }
+
+    @Override
+    public void moveTo(double x, double y) {
+        this.x = x;
+        this.y = y;
+    }
+}
+
+Завдання 3. Клас Smartphone (реалізація GPS + Cellular)
+
+interface GPS {
+    double[] getCoordinates();
+}
+
+interface Cellular {
+    void makeCall();
+    void receiveCall();
+}
+
+public class Smartphone implements GPS, Cellular {
+
+    private double latitude;
+    private double longitude;
+
+    public Smartphone(double latitude, double longitude) {
+        this.latitude = latitude;
+        this.longitude = longitude;
+    }
+
+    @Override
+    public double[] getCoordinates() {
+        return new double[]{latitude, longitude};
+    }
+
+    @Override
+    public void makeCall() {
+        System.out.println("Виклик здійснюється...");
+    }
+
+    @Override
+    public void receiveCall() {
+        System.out.println("Вхідний дзвінок...");
+    }
+}
+
+Завдання 4
+
+Спочатку порівнюємо ціну — менша ціна = "більший" автомобіль
+Якщо ціна рівна — новіший (більший рік) сильніший
+Якщо рік однаковий — більше кінських сил → більший
+
+public class Car implements Comparable {
+
+    private int price;
+    private int year;
+    private int horsePower;
+
+    public Car(int price, int year, int horsePower) {
+        this.price = price;
+        this.year = year;
+        this.horsePower = horsePower;
+    }
+
+    public int getPrice() {
+        return price;
+    }
+
+    public int getYear() {
+        return year;
+    }
+
+    public int getHorsePower() {
+        return horsePower;
+    }
+
+    public void setPrice(int price) {
+        this.price = price;
+    }
+
+    public void setYear(int year) {
+        this.year = year;
+    }
+
+    public void setHorsePower(int horsePower) {
+        this.horsePower = horsePower;
+    }
+
+    @Override
+    public int compareTo(Object o) {
+
+        if (!(o instanceof Car)) return 0;
+
+        Car c = (Car) o;
+
+        // 1) Менша ціна = більший
+        if (this.price != c.price) {
+            return this.price < c.price ? 1 : -1;
+        }
+
+        // 2) Новіший = більший
+        if (this.year != c.year) {
+            return this.year > c.year ? 1 : -1;
+        }
+
+        // 3) Більше кінських сил = більший
+        if (this.horsePower != c.horsePower) {
+            return this.horsePower > c.horsePower ? 1 : -1;
+        }
+
+        return 0;
+    }
+}
+
+Завдання 5
+Абстрактний клас:
+
+import java.awt.*;
+
+public abstract class Shape2D {
+    protected int x, y, width, height;
+
+    public Shape2D(int x, int y, int width, int height) {
+        this.x = Math.min(x, x + width);
+        this.y = Math.min(y, y + height);
+        this.width = Math.abs(width);
+        this.height = Math.abs(height);
+    }
+
+    public abstract void draw(Graphics g);
+}
+
+Прямокутник:
+import java.awt.*;
+
+public class RectangleShape extends Shape2D {
+
+    public RectangleShape(int x, int y, int width, int height) {
+        super(x, y, width, height);
+    }
+
+    @Override
+    public void draw(Graphics g) {
+        g.drawRect(x, y, width, height);
+    }
+}
+
+Еліпс:
+import java.awt.*;
+
+public class EllipseShape extends Shape2D {
+
+    public EllipseShape(int x, int y, int width, int height) {
+        super(x, y, width, height);
+    }
+
+    @Override
+    public void draw(Graphics g) {
+        g.drawOval(x, y, width, height);
+    }
+}
+
+Панель малювання:
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+import java.util.*;
+
+public class DrawPanel extends JPanel {
+
+    private java.util.List<Shape2D> shapes = new ArrayList<>();
+    private int startX, startY, currentX, currentY;
+    private boolean dragging = false;
+
+    public static final int RECTANGLE = 0;
+    public static final int ELLIPSE = 1;
+
+    private int mode = RECTANGLE;
+
+    public DrawPanel() {
+        setBackground(Color.WHITE);
+
+        MouseAdapter handler = new MouseAdapter() {
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+                startX = currentX = e.getX();
+                startY = currentY = e.getY();
+                dragging = true;
+            }
+
+            @Override
+            public void mouseDragged(MouseEvent e) {
+                currentX = e.getX();
+                currentY = e.getY();
+                repaint();
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                dragging = false;
+                int w = currentX - startX;
+                int h = currentY - startY;
+
+                Shape2D s;
+                if (mode == RECTANGLE)
+                    s = new RectangleShape(startX, startY, w, h);
+                else
+                    s = new EllipseShape(startX, startY, w, h);
+
+                shapes.add(s);
+                repaint();
+            }
+        };
+
+        addMouseListener(handler);
+        addMouseMotionListener(handler);
+    }
+
+    public void setMode(int mode) {
+        this.mode = mode;
+    }
+
+    public void clear() {
+        shapes.clear();
+        repaint();
+    }
+
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+
+        for (Shape2D s : shapes) {
+            s.draw(g);
+        }
+
+        if (dragging) {
+            int w = currentX - startX;
+            int h = currentY - startY;
+            int x = Math.min(startX, currentX);
+            int y = Math.min(startY, currentY);
+            w = Math.abs(w);
+            h = Math.abs(h);
+
+            if (mode == RECTANGLE)
+                g.drawRect(x, y, w, h);
+            else
+                g.drawOval(x, y, w, h);
+        }
+    }
+}
+
+Головне вікно:
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+
+public class DrawFrame extends JFrame implements ActionListener {
+
+    private DrawPanel panel = new DrawPanel();
+    private JButton rectButton = new JButton("Rectangle");
+    private JButton ellipseButton = new JButton("Ellipse");
+    private JButton clearButton = new JButton("Clear");
+
+    public DrawFrame() {
+        setTitle("Draw App");
+        setSize(800, 600);
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
+
+        JPanel top = new JPanel();
+        top.add(rectButton);
+        top.add(ellipseButton);
+        top.add(clearButton);
+
+        rectButton.addActionListener(this);
+        ellipseButton.addActionListener(this);
+        clearButton.addActionListener(this);
+
+        add(top, BorderLayout.NORTH);
+        add(panel, BorderLayout.CENTER);
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        if (e.getSource() == rectButton)
+            panel.setMode(DrawPanel.RECTANGLE);
+        else if (e.getSource() == ellipseButton)
+            panel.setMode(DrawPanel.ELLIPSE);
+        else
+            panel.clear();
+    }
+
+    public static void main(String[] args) {
+        new DrawFrame().setVisible(true);
+    }
+}
+
+Завдання 6. SortingList
+Компаратор для прізвища:
+
+import java.util.Comparator;
+
+public class LastNameSorter implements Comparator {
+    @Override
+    public int compare(Object o1, Object o2) {
+        if (o1 instanceof Student && o2 instanceof Student) {
+            Student s1 = (Student) o1;
+            Student s2 = (Student) o2;
+
+            return s1.getLastName().compareTo(s2.getLastName());
+        }
+        return 0;
+    }
+}
+
+Компаратор для середнього балу:
+import java.util.Comparator;
+
+public class GradeSorter implements Comparator {
+    @Override
+    public int compare(Object o1, Object o2) {
+        if (o1 instanceof Student && o2 instanceof Student) {
+            Student s1 = (Student) o1;
+            Student s2 = (Student) o2;
+
+            if (s1.getAverageGrade() < s2.getAverageGrade()) return -1;
+            if (s1.getAverageGrade() > s2.getAverageGrade()) return 1;
+            return 0;
+        }
+        return 0;
+    }
+}
+
+Listener:
+private boolean nameAsc = true;
+private boolean lastNameAsc = true;
+private boolean gradeAsc = true;
+
+// При натисканні кнопки "Sort by name":
+Collections.sort(students, new NameSorter());
+if (!nameAsc) Collections.reverse(students);
+nameAsc = !nameAsc;
+
+
